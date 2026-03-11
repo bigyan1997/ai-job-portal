@@ -15,8 +15,22 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
+from accounts.views import GoogleLogin, UserProfileUpdateView, RegisterView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    
+    # --- AUTH SECTION ---
+    path('dj-rest-auth/', include('dj_rest_auth.urls')), # This already handles manual LOGIN at /dj-rest-auth/login/
+    path('dj-rest-auth/google/', GoogleLogin.as_view(), name='google_login'),
+    path('api/auth/register/', RegisterView.as_view(), name='register'), # Add this for Sign-Up
+    
+    # --- USER & JOBS ---
+    path('api/user/update/', UserProfileUpdateView.as_view(), name='user_update'),
+    path('api/jobs/', include('jobs.urls')),
 ]
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
