@@ -39,10 +39,20 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             print(f"🔌 WebSocket disconnected: User {self.user.id}")
 
     async def send_notification(self, event):
-        # Send the data to the React frontend including the real DB id
+        """
+        Final bridge that pushes the message to the user's browser.
+        Handles both flat and nested data structures.
+        """
+        # 1. Try to get job_id from top level, then from nested 'data'
+        job_id = event.get("job_id")
+        if not job_id:
+            job_id = event.get("data", {}).get("job_id")
+
+        # 2. Package everything for React
         await self.send(text_data=json.dumps({
-            "type": event.get("notification_type", "general"),
+            "id": event.get("id"), # Real DB ID to prevent 404s
             "message": event.get("message"),
-            "id": event.get("id"), # <-- ADD THIS LINE
-            "job_id": event.get("data", {}).get("job_id") # Adjust based on your structure
+            "notification_type": event.get("notification_type", "general"),
+            "job_id": job_id, # This is what React needs to open the modal
         }))
+        print(f"📡 WS Sent to {self.user.id}: {event.get('message')} | Job ID: {job_id}")

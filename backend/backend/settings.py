@@ -9,6 +9,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # --- SECURITY SETTINGS ---
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-default-key-for-dev')
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
+
 DEBUG = True 
 ALLOWED_HOSTS = []
 

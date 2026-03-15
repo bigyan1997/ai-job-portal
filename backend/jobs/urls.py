@@ -11,7 +11,12 @@ from .views import (
     UpdateApplicationStatusView, 
     NotificationListView, 
     NotificationDetailView,
-    WithdrawApplicationView
+    WithdrawApplicationView,
+    OptimizeResumeView,
+    AnalyzeResumeView,
+    GenerateCoverLetterView,
+    JobWithdrawalHistoryView,
+    GlobalWithdrawalHistoryView
 )
 
 urlpatterns = [
@@ -51,8 +56,24 @@ urlpatterns = [
     
     # Mark a notification as read or delete it
     path('notifications/<int:pk>/', NotificationDetailView.as_view(), name='notification-delete'),
+    
+    # This handles general detail/delete
+    path('notifications/<int:pk>/', NotificationDetailView.as_view(), name='notification-detail'),
+
+    # ADD THIS: Specific endpoint for marking as read
+    path('notifications/<int:pk>/read/', NotificationDetailView.as_view(), name='notification-read'),
 
     # Withdraw an application (Seeker action)
     path('applications/withdraw/<int:job_id>/', WithdrawApplicationView.as_view(), name='withdraw-application'),
+
+    path('<int:job_id>/withdrawal-history/', JobWithdrawalHistoryView.as_view(), name='job-withdrawal-history'),
+
+    path('optimize-resume/', OptimizeResumeView.as_view(), name='optimize-resume'),
+
+    path('analyze-resume/', AnalyzeResumeView.as_view(), name='analyze-resume'),
+
+    path('generate-cover-letter/', GenerateCoverLetterView.as_view(), name='generate-cover-letter'),
+
+    path('all-withdrawals/', GlobalWithdrawalHistoryView.as_view(), name='global-withdrawal-history'),
 
 ]

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Job, Application
+from .models import Job, Application, WithdrawalLog
 
 @admin.register(Job)
 class JobAdmin(admin.ModelAdmin):
@@ -59,3 +59,21 @@ class ApplicationAdmin(admin.ModelAdmin):
         from the related CustomUser model.
         """
         return obj.seeker.email
+
+@admin.register(WithdrawalLog)
+class WithdrawalLogAdmin(admin.ModelAdmin):
+    # Columns to show in the list view
+    list_display = ('seeker_name', 'seeker_email', 'job_title', 'reason', 'withdrawn_at')
+    
+    # Add a search bar to find specific candidates or jobs
+    search_fields = ('seeker_name', 'seeker_email', 'job__title')
+    
+    # Add filters on the right side
+    list_filter = ('withdrawn_at', 'reason')
+    
+    # Make the log entries read-only in the admin detail view
+    readonly_fields = ('seeker_name', 'seeker_email', 'job', 'reason', 'withdrawn_at')
+
+    def job_title(self, obj):
+        return obj.job.title
+    job_title.short_description = 'Job Title'
